@@ -148,6 +148,8 @@ ggplot(data=daily_activity_sleep) +
   labs(x = 'Day of the week', y = 'Total Steps', 
   title = 'Total no of steps taken in a week')
   ```
+ ![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..cuQr6xdllkrQpq-NAr9ZrA.8QouZNgsYzo3g-c-7tOtS4l661qsRjVSF3XyFLZ4bepkDiRQ1q1cE_gLkzNH4eND_cnxkE1LwI-d2jvJ44OIx0zJ1wnW4e8EcJzd3xPJcBgeUt7m7Sp9p2rt-J4cbaCPB0hrnrop6MAReHhLCs7rSCUdZR5mVG6ysYOzy5yWHjGgSNbBEogJ5MBnfnKM74xiyO0pZu76nSLgSxwmN2DPiu8mqWucGSJrKWJrDxBb7BTRmrx-kw66FvF1m8jyftEj8EEmDGPhPtoDMdvpxs73H73N9KRnY3WVDGB1vfonkdi_l2z12gp6Q9gpHEDG8Nux96MlKQWQLWYkkWleQtugRdvGFN5e2KRAXEJoeC3wTO5dgKVcvGEkd0Wu157VR8-ung2OggQ67IzUmrtjdFbgsIe7WdnPuBvr-B-BP5w3AYXqhBUqPoxQvDXrOVFCteqInkr5bSHy4IOc-k3VPqFjYJ-1aFfIJnrFWRUP4L0y3DXUXyDp_tFNuYiIvNRQ47NoBnN_BpRA1F2OKJmY3bLWxWnxhzwJJ8h4DKrWuTsSa46NcQvamBj1bj12d9T_kbxvbyUeYw55wDxg-GLJNYfOjJEWGgz9q-rRd-1JW4Px84ojpiU1qo1z70xfiCqVcG9jesYSqbvRvv2gBi6uKl8wDa0Pdh8X57NmKWD_N3RY2BXrG0TqUq2pDb3Xv5jlBd2k.JYXUuuHA-Z_wUWbiE_2oOQ/__results___files/__results___40_1.png)
+
   We can see that the users are most active when the weekend starts and the activity level declines as the week progresses. This could be because of a busy schedule or motivation level.
 
 **Sleep Distribution**
@@ -166,3 +168,5 @@ sleep_log <- sleep_day%>%
      total_hours_asleep >= 8 ~ "More than 8 hours"
   ))
   ```
+  ![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..cuQr6xdllkrQpq-NAr9ZrA.8QouZNgsYzo3g-c-7tOtS4l661qsRjVSF3XyFLZ4bepkDiRQ1q1cE_gLkzNH4eND_cnxkE1LwI-d2jvJ44OIx0zJ1wnW4e8EcJzd3xPJcBgeUt7m7Sp9p2rt-J4cbaCPB0hrnrop6MAReHhLCs7rSCUdZR5mVG6ysYOzy5yWHjGgSNbBEogJ5MBnfnKM74xiyO0pZu76nSLgSxwmN2DPiu8mqWucGSJrKWJrDxBb7BTRmrx-kw66FvF1m8jyftEj8EEmDGPhPtoDMdvpxs73H73N9KRnY3WVDGB1vfonkdi_l2z12gp6Q9gpHEDG8Nux96MlKQWQLWYkkWleQtugRdvGFN5e2KRAXEJoeC3wTO5dgKVcvGEkd0Wu157VR8-ung2OggQ67IzUmrtjdFbgsIe7WdnPuBvr-B-BP5w3AYXqhBUqPoxQvDXrOVFCteqInkr5bSHy4IOc-k3VPqFjYJ-1aFfIJnrFWRUP4L0y3DXUXyDp_tFNuYiIvNRQ47NoBnN_BpRA1F2OKJmY3bLWxWnxhzwJJ8h4DKrWuTsSa46NcQvamBj1bj12d9T_kbxvbyUeYw55wDxg-GLJNYfOjJEWGgz9q-rRd-1JW4Px84ojpiU1qo1z70xfiCqVcG9jesYSqbvRvv2gBi6uKl8wDa0Pdh8X57NmKWD_N3RY2BXrG0TqUq2pDb3Xv5jlBd2k.JYXUuuHA-Z_wUWbiE_2oOQ/__results___files/__results___44_1.png)
+  
