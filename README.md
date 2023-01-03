@@ -10,10 +10,10 @@ The Bellabeat app provides users with health data related to their activity, sle
 The case study follows the six step data analysis process:
 
 * [1. Ask](#1-ask)
-* [2. Prepare](#prepare)
-* [3. Process](#process)
-* [4. Analyze and Share](#analyze_and_share)
-* [5. Act](#act)
+* [2. Prepare](#2-prepare)
+* [3. Process](#3-process)
+* [4. Analyze and Share](#4-analyze_and_share)
+* [5. Act](#5-act)
 
 ## 1. Ask
 
