@@ -52,3 +52,48 @@ daily_activity <- read.csv("/cloud/project/dailyActivity_merged.csv")
 sleep_day <- read.csv("/cloud/project/sleepDay_merged.csv")
 weight_log_info <- read.csv("/cloud/project/weightLogInfo_merged.csv")
 ```
+### 4.3 Exploring the dataframe
+The Summary of daily_activity, sleep_day and weight_log_info.
+```bash
+str(daily_activity) 
+str(sleep_day) 
+str(weight_log_info) 
+```
+### 4.4 Cleaning and formatting the datasets
+Converting the snakeCase to camel_case for the three main datasets
+```bash
+daily_activity <- clean_names(daily_activity)
+sleep_day <- clean_names(sleep_day)
+weight_log_info <- clean_names(weight_log_info)
+```
+Checking and removing duplicates
+```bash
+#To check for duplicates
+sum(duplicated(sleep_day))
+
+#To clear duplicates
+sleep_day <- sleep_day %>%
+  distinct() %>%
+  drop_na()
+
+#After deleting duplicates
+nrow(sleep_day)
+```
+Formatting String Date datatype to Date time datatype for daily_activity, sleep_day and weight_log_info
+```bash
+daily_activity$activity_date <- as.Date(daily_activity$activity_date,'%m/%d/%y')
+sleep_day$sleep_day <- as.Date(sleep_day$sleep_day,'%m/%d/%y')
+weight_log_info$date <- as.Date(weight_log_info$date,'%m/%d/%y')
+```
+Renaming the data column for daily_activity and sleep_day
+```bash
+daily_activity <- daily_activity %>%
+  rename(date = activity_date)
+
+sleep_day <- sleep_day %>%
+  rename(date = sleep_day)
+  ```
+Converting minutes to hours for total_minutes_asleep
+```bash
+sleep_day$total_hours_asleep = round((sleep_day$total_minutes_asleep)/60, digits = 2)
+  ```
