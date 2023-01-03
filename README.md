@@ -120,6 +120,8 @@ daily_activity_sleep <- merge(daily_activity, sleep_day, by=c ("id", "date"))
 daily_activity_weight <- merge(daily_activity, weight_log_info, by=c ("id", "date"))
   ```
   ## 4. Analyze and Share
+  **Total Steps Vs Sleep**
+
   Let’s take a look at how Total steps will influence sleep
 ```bash
   ggplot(data = daily_activity_sleep) +
@@ -128,4 +130,37 @@ daily_activity_weight <- merge(daily_activity, weight_log_info, by=c ("id", "dat
     theme(panel.border = element_rect(colour = "black", fill=NA)) +
     labs(x = 'Total Steps', y = 'Total Minutes Asleep', 
     title = 'Total Steps vs Total Minutes Asleep')
+  ```
+  We observe from the graph that the Total steps taken don’t necessarily mean that the person will have a better sleep.
+ 
+ **Total Steps Vs weekends**
+
+  #options(scipen=) will remove any scientific notations
+options(scipen = 999)
+```
+ggplot(data=daily_activity_sleep) + 
+  geom_col(mapping = aes(x=day_of_week,y=total_steps, fill=day_of_week)) + 
+  theme(panel.border = element_rect(colour = "black", fill=NA)) +
+  scale_fill_brewer(palette="Set2") +
+  theme(legend.position="none") +
+  labs(x = 'Day of the week', y = 'Total Steps', 
+  title = 'Total no of steps taken in a week')
+  ```
+  We can see that the users are most active when the weekend starts and the activity level declines as the week progresses. This could be because of a busy schedule or motivation level.
+
+**Sleep Distribution**
+
+According to [Mayoclinic](https://www.mayoclinic.org/healthy-lifestyle/adult-health/expert-answers/how-many-hours-of-sleep-are-enough/faq-20057898), if one gets:
+
+- Less than 7 hours: Insufficient
+- 7 to 8 hours: Well rested
+- More than 8 hours: Overslept
+
+```
+sleep_log <- sleep_day%>%
+  mutate(sleep_log = case_when( 
+     total_hours_asleep < 7 ~ "Less than 7 hours",
+     total_hours_asleep >= 7 &  total_hours_asleep < 8 ~ "7 to 8 hours", 
+     total_hours_asleep >= 8 ~ "More than 8 hours"
+  ))
   ```
