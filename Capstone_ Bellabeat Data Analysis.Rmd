@@ -264,3 +264,60 @@ ggplot(data = daily_activity_weight) +
 
 ggsave("weight vs total steps.png")
 ```
+## 4.7 User Type Distribution
+```{r}
+daily_average <- daily_activity_sleep %>%
+  group_by(id) %>%
+  summarise (mean_total_steps = mean(total_steps),
+             mean_total_calories = mean(calories),
+             mean_total_sleep = mean(total_minutes_asleep))
+
+head(daily_average)
+```
+
+```{r}
+activity_user_type <- daily_average %>%
+  mutate(activity_user_type = case_when( 
+    mean_total_steps < 5000 ~ "Sedentary",
+    mean_total_steps >= 5000 & mean_total_steps < 7500 ~ "Low active", 
+    mean_total_steps >= 7500 & mean_total_steps < 10000 ~ "Somewhat active", 
+    mean_total_steps >= 10000 & mean_total_steps < 12500 ~ "Active",
+    mean_total_steps >= 12500 ~ "Highly active"
+  ))
+
+head(activity_user_type)
+```
+
+```{r}
+user_type <- activity_user_type %>%
+    group_by(activity_user_type) %>%
+    summarise(total = n()) %>%
+    mutate(totals = sum(total)) %>%
+    group_by(activity_user_type) %>%
+    summarise(user_percent = total / totals) %>%
+    mutate(percent = scales::percent(user_percent))
+  
+user_type <- user_type %>% mutate(percent=percent(user_percent))
+
+str(user_type)
+```
+
+```{r}
+ggplot(user_type,aes(fill=activity_user_type,y = percent,x = "")) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar("y", start = 0) +
+  scale_fill_brewer(palette="Set2") +
+  theme_void() +
+  geom_text(aes(label = percent, x=1),position = position_stack(vjust = 0.5)) +
+  theme(axis.title.x= element_blank(),
+        axis.title.y = element_blank(),
+        panel.border = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.ticks = element_blank(),
+        axis.text.x = element_blank(),
+        plot.title = element_text(hjust = 0.5, vjust = -5, size = 15, family="TT Times New Roman", face = "bold")) +
+  labs(title = "User Type Distribution") +
+  guides(fill = guide_legend(title = "User Type Distribution"))
+  
+ggsave("User Type Distribution.png")
+```
