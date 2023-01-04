@@ -177,7 +177,7 @@ sleep_percent <- sleep_log%>%
   summarise(sleep_percent = total / totals) %>%
   mutate(percent = scales::percent(sleep_percent))
 ```
-
+Let's plot the graph to see the sleep distribution of the users
 ```
 ggplot(data=sleep_percent) + 
   geom_col(mapping = aes(x=sleep_log,y=percent, fill=sleep_log)) + 
@@ -188,6 +188,86 @@ ggplot(data=sleep_percent) +
 ```
 
   ![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..cuQr6xdllkrQpq-NAr9ZrA.8QouZNgsYzo3g-c-7tOtS4l661qsRjVSF3XyFLZ4bepkDiRQ1q1cE_gLkzNH4eND_cnxkE1LwI-d2jvJ44OIx0zJ1wnW4e8EcJzd3xPJcBgeUt7m7Sp9p2rt-J4cbaCPB0hrnrop6MAReHhLCs7rSCUdZR5mVG6ysYOzy5yWHjGgSNbBEogJ5MBnfnKM74xiyO0pZu76nSLgSxwmN2DPiu8mqWucGSJrKWJrDxBb7BTRmrx-kw66FvF1m8jyftEj8EEmDGPhPtoDMdvpxs73H73N9KRnY3WVDGB1vfonkdi_l2z12gp6Q9gpHEDG8Nux96MlKQWQLWYkkWleQtugRdvGFN5e2KRAXEJoeC3wTO5dgKVcvGEkd0Wu157VR8-ung2OggQ67IzUmrtjdFbgsIe7WdnPuBvr-B-BP5w3AYXqhBUqPoxQvDXrOVFCteqInkr5bSHy4IOc-k3VPqFjYJ-1aFfIJnrFWRUP4L0y3DXUXyDp_tFNuYiIvNRQ47NoBnN_BpRA1F2OKJmY3bLWxWnxhzwJJ8h4DKrWuTsSa46NcQvamBj1bj12d9T_kbxvbyUeYw55wDxg-GLJNYfOjJEWGgz9q-rRd-1JW4Px84ojpiU1qo1z70xfiCqVcG9jesYSqbvRvv2gBi6uKl8wDa0Pdh8X57NmKWD_N3RY2BXrG0TqUq2pDb3Xv5jlBd2k.JYXUuuHA-Z_wUWbiE_2oOQ/__results___files/__results___44_1.png)
+
+From the bar chart, we can see that only about 27% of the users sleep for a sufficient amount of 7 to 8 hours whereas 44% sleep for less than 7 hours.
+
+**Total Steps Vs Calories**
+```
+daily_activity_sleep %>% 
+  group_by(total_steps, calories) %>% 
+  ggplot(aes(x = total_steps, y = calories, color = calories)) +
+  geom_point() +
+  geom_smooth() + 
+  theme(legend.position = c(.9, .2),
+        legend.spacing.y = unit(1, "mm"), 
+        panel.border = element_rect(colour = "black", fill=NA),
+        legend.background = element_blank(),
+        legend.box.background = element_rect(colour = "black")) +
+  labs(title = 'Calories Burned by Total Steps Taken',
+       y = 'Calories',
+       x = 'Total Steps')
+```
+![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..7bUx0B3-P2anyMF-cJdrmA.Ha9AJv4uHj-xFqDi9RGy3Rac0dCdnVaapYTPve4FxsJ3bVnMQFlCm5nxDJ4LIqChlv-Nnb6pdU8cAxkZkPYaL8UY4qBD-DXCAH5Q1dg1qyjNr_M4ZhDqpZ72W-0lflQaKeDjlVJ1UVWcNNoMYCwTWMrjh60Ec8tyoqG_n16VRleEyYMf5hLftHCCmp-HTeHL3mbtwSF27mVs4K_6acxS2zTiLVAefzLm6SAZM5IjIKicwsrGQXyBxra2itlyC5m8dEAfRCFpaY-1K-9e649iYttTZ8J3x0HHlGx5ikZCmwG-wb4NdVWdxmG6iKBL7QjYI4O0MUQQVN9qK1LLMxwugP6Km_AunYILtaS98rbb3N5x8MEnBwHOdx3uBxRV52osrfH70sEqnNzBkO7fbPPo_8kFy5dLqWnsbP6Cc6O9oHoZP9bVNTQMJxykuMTE-m2j0ZSVrH19hiWJKzPP55tG5HHUGxgjucvQXE1jteA5_4l8mmVzLHJPEFIMOycXojZlGI0vXY6CxUm9EkNv9LBnFphB7myL9PGv88kRRoqclU5e7N-WqhUNFUWY3fE2AxYoEkzRyOeA8gC8tqoVxyvM-fhQtGAmpmNlzCQn5uJfSBK9ir5erIILJCnfCDpKWAGRP05o-BntXSQUT__UFHY39hdo4WUQv0pUyQgmSpEcNhwfSY4WMScTV6DEGT3T205L.rnb5xXM2dJdWxrzJZWCBpQ/__results___files/__results___46_1.png)
+From the graph, we can see that there is a correlation between Total Steps and Calories. When the user takes more number of steps, more calories are burned.
+
+**BMI Distribution**
+
+According to standard BMI values from [hdfclife](https://www.hdfclife.com/financial-tools-calculators/bmi-calculator) we have,
+
+- Underweight – BMI less than 18.5
+- Normal weight – BMI between 18.5 and 24
+- Overweight – BMI between 25 and 29.9
+- Obese – BMI above 30
+```
+weight_log_bmi <- weight_log_info %>%
+  mutate(bmi_log = case_when( 
+    bmi < 18.5 ~ "Underweight",
+    bmi >= 18.5 & bmi < 24 ~ "Normal Weight", 
+    bmi >= 24 & bmi < 29.9 ~ "Overweight", 
+    bmi >= 30 ~ "Obesity",
+  ))
+```
+Finding the list of distinct users
+```
+weight_log_users <- weight_log_bmi %>% distinct(id, .keep_all = TRUE)
+weight_log_bmi %>% group_by(id) %>% filter(row_number() == 1)
+```
+Returned with 8 distinct users who have entered their weight.
+
+Finding the percentage of each of the previous range
+```
+weight_bmi_percent <- weight_log_users %>%
+  group_by(bmi_log) %>%
+  summarise(total = n()) %>%
+  mutate(totals = sum(total)) %>%
+  group_by(bmi_log) %>%
+  summarise(bmi_percent = total / totals) %>%
+  mutate(percent = scales::percent(bmi_percent))
+```
+We found that 25% of the users are of Normal weight, 12% obese and 62% are Overweight.
+
+Let's plot a pie chart for the same.
+```
+ggplot(weight_bmi_percent,aes(fill=bmi_log,y = percent,x = "")) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar("y", start = 0) +
+  scale_fill_brewer(palette="Set2") +
+  theme_void() +
+  geom_text(aes(label = percent, x=1),position = position_stack(vjust = 0.5)) +
+  theme(axis.title.x= element_blank(),
+        axis.title.y = element_blank(),
+        panel.border = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.ticks = element_blank(),
+        axis.text.x = element_blank(),
+        plot.title = element_text(hjust = 0.5, vjust = -5, size = 15, family="TT Times New Roman", face = "bold")) +
+  labs(title = "BMI Distribution") +
+  guides(fill = guide_legend(title = "BMI Distribution"))
+
+```
+![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..7bUx0B3-P2anyMF-cJdrmA.Ha9AJv4uHj-xFqDi9RGy3Rac0dCdnVaapYTPve4FxsJ3bVnMQFlCm5nxDJ4LIqChlv-Nnb6pdU8cAxkZkPYaL8UY4qBD-DXCAH5Q1dg1qyjNr_M4ZhDqpZ72W-0lflQaKeDjlVJ1UVWcNNoMYCwTWMrjh60Ec8tyoqG_n16VRleEyYMf5hLftHCCmp-HTeHL3mbtwSF27mVs4K_6acxS2zTiLVAefzLm6SAZM5IjIKicwsrGQXyBxra2itlyC5m8dEAfRCFpaY-1K-9e649iYttTZ8J3x0HHlGx5ikZCmwG-wb4NdVWdxmG6iKBL7QjYI4O0MUQQVN9qK1LLMxwugP6Km_AunYILtaS98rbb3N5x8MEnBwHOdx3uBxRV52osrfH70sEqnNzBkO7fbPPo_8kFy5dLqWnsbP6Cc6O9oHoZP9bVNTQMJxykuMTE-m2j0ZSVrH19hiWJKzPP55tG5HHUGxgjucvQXE1jteA5_4l8mmVzLHJPEFIMOycXojZlGI0vXY6CxUm9EkNv9LBnFphB7myL9PGv88kRRoqclU5e7N-WqhUNFUWY3fE2AxYoEkzRyOeA8gC8tqoVxyvM-fhQtGAmpmNlzCQn5uJfSBK9ir5erIILJCnfCDpKWAGRP05o-BntXSQUT__UFHY39hdo4WUQv0pUyQgmSpEcNhwfSY4WMScTV6DEGT3T205L.rnb5xXM2dJdWxrzJZWCBpQ/__results___files/__results___51_1.png)
+From the graph, we can see that 62% are overweight, 12% are obese and 25% are of Normal Weight.
+
 
 ## 5. Act
 - The total no of steps taken doesn’t necessarily mean that the person will have a better sleep. Bellabeat app could provide a quiz when the user signs up to help the user understand better how they can improve both their sleep and how much they need to walk per day according to their height, weight, and more.
