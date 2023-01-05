@@ -107,7 +107,12 @@ Converting minutes to hours for total_minutes_asleep in sleep_day dataset
 ```bash
 sleep_day$total_hours_asleep = round((sleep_day$total_minutes_asleep)/60, digits = 2)
   ```
-  Formatting String datatype to Boolean datatype in weight_log_info dataset
+Dropping total_minutes_asleep
+```
+daily_activity_sleep = subset(daily_activity_sleep, select = -c(total_minutes_asleep))
+```
+
+Formatting String datatype to Boolean datatype in weight_log_info dataset
   ```bash
 weight_log_info$is_manual_report <- as.logical(weight_log_info$is_manual_report)
   ```
@@ -126,11 +131,11 @@ daily_activity_weight <- merge(daily_activity, weight_log_info, by=c ("id", "dat
   Let’s take a look at how Total steps will influence sleep
 ```bash
   ggplot(data = daily_activity_sleep) +
-    aes(x=total_steps, y = total_minutes_asleep) +
+    aes(x=total_steps, y = total_hours_asleep) +
     geom_point(color = '#004c6d') + geom_smooth() + 
     theme(panel.border = element_rect(colour = "black", fill=NA)) +
-    labs(x = 'Total Steps', y = 'Total Minutes Asleep', 
-    title = 'Total Steps vs Total Minutes Asleep')
+    labs(x = 'Total Steps', y = 'Total Hours Asleep', 
+    title = 'Total Steps vs Total Hours Asleep')
   ```
   ![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..7bUx0B3-P2anyMF-cJdrmA.Ha9AJv4uHj-xFqDi9RGy3Rac0dCdnVaapYTPve4FxsJ3bVnMQFlCm5nxDJ4LIqChlv-Nnb6pdU8cAxkZkPYaL8UY4qBD-DXCAH5Q1dg1qyjNr_M4ZhDqpZ72W-0lflQaKeDjlVJ1UVWcNNoMYCwTWMrjh60Ec8tyoqG_n16VRleEyYMf5hLftHCCmp-HTeHL3mbtwSF27mVs4K_6acxS2zTiLVAefzLm6SAZM5IjIKicwsrGQXyBxra2itlyC5m8dEAfRCFpaY-1K-9e649iYttTZ8J3x0HHlGx5ikZCmwG-wb4NdVWdxmG6iKBL7QjYI4O0MUQQVN9qK1LLMxwugP6Km_AunYILtaS98rbb3N5x8MEnBwHOdx3uBxRV52osrfH70sEqnNzBkO7fbPPo_8kFy5dLqWnsbP6Cc6O9oHoZP9bVNTQMJxykuMTE-m2j0ZSVrH19hiWJKzPP55tG5HHUGxgjucvQXE1jteA5_4l8mmVzLHJPEFIMOycXojZlGI0vXY6CxUm9EkNv9LBnFphB7myL9PGv88kRRoqclU5e7N-WqhUNFUWY3fE2AxYoEkzRyOeA8gC8tqoVxyvM-fhQtGAmpmNlzCQn5uJfSBK9ir5erIILJCnfCDpKWAGRP05o-BntXSQUT__UFHY39hdo4WUQv0pUyQgmSpEcNhwfSY4WMScTV6DEGT3T205L.rnb5xXM2dJdWxrzJZWCBpQ/__results___files/__results___38_1.png)
   We observe from the graph that the Total steps taken don’t necessarily mean that the person will have a better sleep.
