@@ -109,7 +109,7 @@ sleep_day$total_hours_asleep = round((sleep_day$total_minutes_asleep)/60, digits
   ```
 Dropping total_minutes_asleep in sleep_day dataset
 ```
-daily_activity_sleep = subset(daily_activity_sleep, select = -c(total_minutes_asleep))
+sleep_day = subset(sleep_day, select = -c(total_minutes_asleep))
 ```
 
 Formatting String datatype to Boolean datatype in weight_log_info dataset
