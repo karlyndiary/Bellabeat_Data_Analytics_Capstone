@@ -107,7 +107,7 @@ Converting minutes to hours for total_minutes_asleep in sleep_day dataset
 ```bash
 sleep_day$total_hours_asleep = round((sleep_day$total_minutes_asleep)/60, digits = 2)
   ```
-Dropping total_minutes_asleep
+Dropping total_minutes_asleep in sleep_day dataset
 ```
 daily_activity_sleep = subset(daily_activity_sleep, select = -c(total_minutes_asleep))
 ```
@@ -300,7 +300,7 @@ daily_average <- daily_activity_sleep %>%
   group_by(id) %>%
   summarise (mean_total_steps = mean(total_steps),
              mean_total_calories = mean(calories),
-             mean_total_sleep = mean(total_minutes_asleep))
+             mean_total_sleep = mean(total_hours_asleep))
 ```
 
 ```
@@ -347,9 +347,6 @@ ggplot(user_type,aes(fill=activity_user_type,y = percent,x = "")) +
 ![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..7bUx0B3-P2anyMF-cJdrmA.Ha9AJv4uHj-xFqDi9RGy3Rac0dCdnVaapYTPve4FxsJ3bVnMQFlCm5nxDJ4LIqChlv-Nnb6pdU8cAxkZkPYaL8UY4qBD-DXCAH5Q1dg1qyjNr_M4ZhDqpZ72W-0lflQaKeDjlVJ1UVWcNNoMYCwTWMrjh60Ec8tyoqG_n16VRleEyYMf5hLftHCCmp-HTeHL3mbtwSF27mVs4K_6acxS2zTiLVAefzLm6SAZM5IjIKicwsrGQXyBxra2itlyC5m8dEAfRCFpaY-1K-9e649iYttTZ8J3x0HHlGx5ikZCmwG-wb4NdVWdxmG6iKBL7QjYI4O0MUQQVN9qK1LLMxwugP6Km_AunYILtaS98rbb3N5x8MEnBwHOdx3uBxRV52osrfH70sEqnNzBkO7fbPPo_8kFy5dLqWnsbP6Cc6O9oHoZP9bVNTQMJxykuMTE-m2j0ZSVrH19hiWJKzPP55tG5HHUGxgjucvQXE1jteA5_4l8mmVzLHJPEFIMOycXojZlGI0vXY6CxUm9EkNv9LBnFphB7myL9PGv88kRRoqclU5e7N-WqhUNFUWY3fE2AxYoEkzRyOeA8gC8tqoVxyvM-fhQtGAmpmNlzCQn5uJfSBK9ir5erIILJCnfCDpKWAGRP05o-BntXSQUT__UFHY39hdo4WUQv0pUyQgmSpEcNhwfSY4WMScTV6DEGT3T205L.rnb5xXM2dJdWxrzJZWCBpQ/__results___files/__results___58_1.png)
 
 From the evenly distributed pie chart, we can tell that a very less percentage of 4.17% of the users are highly active whereas about 37.5% of the users are somewhat active.
-
-
-
 
 ## 5. Act
 - The total no of steps taken doesn’t necessarily mean that the person will have a better sleep. Bellabeat app could provide a quiz when the user signs up to help the user understand better how they can improve both their sleep and how much they need to walk per day according to their height, weight, and more.
