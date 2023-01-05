@@ -91,14 +91,18 @@ sleep_day$total_hours_asleep = round((sleep_day$total_minutes_asleep)/60, digits
 
 str(sleep_day)
 ```
+### 3.8 Dropping total_minutes_asleep in sleep_day dataset
+```
+sleep_day = subset(sleep_day, select = -c(total_minutes_asleep))
+```
 
-### 3.8 Formatting String datatype to Boolean datatype
+### 3.9 Formatting String datatype to Boolean datatype
 ```{r}
 weight_log_info$is_manual_report <- as.logical(weight_log_info$is_manual_report)
 
 str(weight_log_info)
 ```
-### 3.9 Creating a new column for weekdays
+### 3.10 Creating a new column for weekdays
 ```{r}
 # Adding a new column for weekdays
 daily_activity$day_of_week <- wday(daily_activity$date, label = T, abbr = T)
@@ -107,7 +111,7 @@ daily_activity$day_of_week <- wday(daily_activity$date, label = T, abbr = T)
 str(daily_activity)
 ```
 
-### 3.10 Merging daily_activity and sleep_day dataset
+### 3.11 Merging daily_activity and sleep_day dataset
 ```{r}
 daily_activity_sleep <- merge(daily_activity, sleep_day, by=c ("id", "date"))
 daily_activity_weight <- merge(daily_activity, weight_log_info, by=c ("id", "date"))
@@ -121,12 +125,12 @@ str(daily_activity_weight)
 ### 4.1 Total Steps Vs Sleep
 ```{r amount of sleep gained by the total steps taken}
 ggplot(data = daily_activity_sleep) +
-  aes(x=total_steps, y = total_minutes_asleep) +
+  aes(x=total_steps, y = total_hours_asleep) +
   geom_point(color = '#004c6d') +
   geom_smooth() + 
   theme(panel.border = element_rect(colour = "black", fill=NA)) +
-  labs(x = 'Total Steps', y = 'Total Minutes Asleep', 
-       title = 'Total Steps vs Total Minutes Asleep')
+  labs(x = 'Total Steps', y = 'Total Hours Asleep', 
+       title = 'Total Steps vs Total Hours Asleep')
 
 ggsave('Total Steps vs Total Minutes Asleep.png')
 ```
