@@ -182,6 +182,12 @@ sleep_percent <- sleep_log%>%
   group_by(sleep_log) %>%
   summarise(sleep_percent = total / totals) %>%
   mutate(percent = scales::percent(sleep_percent))
+  
+#formattable use to turn chr to percent
+```
+sleep_percent <- sleep_percent %>% mutate(percent=percent(sleep_percent))
+```
+ 
 ```
 Let's plot the graph to see the sleep distribution of the users
 ```
@@ -192,8 +198,7 @@ ggplot(data=sleep_percent) +
   theme(legend.position="none") +
   labs(x = 'Total Hours Asleep', y = 'Percent', title = 'Sleep Distribution')
 ```
-
-  ![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..cuQr6xdllkrQpq-NAr9ZrA.8QouZNgsYzo3g-c-7tOtS4l661qsRjVSF3XyFLZ4bepkDiRQ1q1cE_gLkzNH4eND_cnxkE1LwI-d2jvJ44OIx0zJ1wnW4e8EcJzd3xPJcBgeUt7m7Sp9p2rt-J4cbaCPB0hrnrop6MAReHhLCs7rSCUdZR5mVG6ysYOzy5yWHjGgSNbBEogJ5MBnfnKM74xiyO0pZu76nSLgSxwmN2DPiu8mqWucGSJrKWJrDxBb7BTRmrx-kw66FvF1m8jyftEj8EEmDGPhPtoDMdvpxs73H73N9KRnY3WVDGB1vfonkdi_l2z12gp6Q9gpHEDG8Nux96MlKQWQLWYkkWleQtugRdvGFN5e2KRAXEJoeC3wTO5dgKVcvGEkd0Wu157VR8-ung2OggQ67IzUmrtjdFbgsIe7WdnPuBvr-B-BP5w3AYXqhBUqPoxQvDXrOVFCteqInkr5bSHy4IOc-k3VPqFjYJ-1aFfIJnrFWRUP4L0y3DXUXyDp_tFNuYiIvNRQ47NoBnN_BpRA1F2OKJmY3bLWxWnxhzwJJ8h4DKrWuTsSa46NcQvamBj1bj12d9T_kbxvbyUeYw55wDxg-GLJNYfOjJEWGgz9q-rRd-1JW4Px84ojpiU1qo1z70xfiCqVcG9jesYSqbvRvv2gBi6uKl8wDa0Pdh8X57NmKWD_N3RY2BXrG0TqUq2pDb3Xv5jlBd2k.JYXUuuHA-Z_wUWbiE_2oOQ/__results___files/__results___44_1.png)
+![image](https://www.kaggleusercontent.com/kf/116335165/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..WYQ1o5vgxR1Z6zdhSUTt8w.rYcHOdZ7RYozWkXFp1LV2LMNFFeMnm0grTUj8qvrzUd54GSlcokuTPrRfRc82WjojQIRAJ2Zgo2vDHqZqU8_MoYapjPJAGlNOBopgdTNjAFuHIgXcPNp9Tin8Il5H7b9pzdpVIRFF4ihOiLpe6sQUj-PPirl2OM08vU_zSdQENYE7gthBXizrsyZRTVHZGVPSnAzZLshxx_6fu0vRtQe-_q15sKuBEI8uU7xR9sEyxO6LyM30Ug9N6-hjjuoncRw4OMWpqQ9tQbgFx_DKzmYj-EwixnMqArg-tOK13PxkBJcnqP7NgUDN2wNw5zVEiGrH_HwYBKuisAsU_uiSoX479OrxUqrIKvTHFBweehdhV6-2BMzPyPvW-mcjgM7DUTIKELNeOo4yw1rUAbhK4vMLPGKKYHPrsxQRjrr4RzZ077kT9tkee5LrbwECnwATNweDYLfKmsRJ7JfC8LByrzOGZl4IuJYMYn8bVMeTcjSReJlNwxPQj68SuUiMj_sPTDsZNwqmmCksaVMmID4nbixIGbfP9thfVipLA3jLcBlL_0DpvLGPSDSQjyoEl7QWAQwd1zglhq4pvEjYcJ2UlMf1znkB7abH6WuPdRjT2hw5oEubvbjVJmNKkZwxzrOqZIATy1S1Ux_eJASQBf9idp5i_Gl1JbArgqjyb3t5shq3nARvpgV00WH1DcxaUtoKJh8.cU6wqUGEqA-xou9EUu3NoA/__results___files/__results___48_1.png)
 
 From the bar chart, we can see that only about 27% of the users sleep for a sufficient amount of 7 to 8 hours whereas 44% sleep for less than 7 hours.
 
@@ -260,13 +265,7 @@ ggplot(weight_bmi_percent,aes(fill=bmi_log,y = percent,x = "")) +
   scale_fill_brewer(palette="Set2") +
   theme_void() +
   geom_text(aes(label = percent, x=1),position = position_stack(vjust = 0.5)) +
-  theme(axis.title.x= element_blank(),
-        axis.title.y = element_blank(),
-        panel.border = element_blank(), 
-        panel.grid = element_blank(), 
-        axis.ticks = element_blank(),
-        axis.text.x = element_blank(),
-        plot.title = element_text(hjust = 0.5, vjust = -5, size = 15, family="TT Times New Roman", face = "bold")) +
+  theme(plot.title = element_text(hjust = 0.5, vjust = -5, size = 15, family="TT Times New Roman", face = "bold")) +
   labs(title = "BMI Distribution") +
   guides(fill = guide_legend(title = "BMI Distribution"))
 
@@ -302,6 +301,16 @@ daily_average <- daily_activity_sleep %>%
              mean_total_calories = mean(calories),
              mean_total_sleep = mean(total_hours_asleep))
 ```
+According to 10000 steps,
+
+- Sedentary: Less than 5,000 steps per day
+- Low active: Between 5,000 to 7,499 steps per day
+- Somewhat active: Between 7,500 to 9,999 steps per day
+- Active: More than 10,000 steps per day
+- Highly active: More than 12,500
+
+With reference to average total steps taken, let's categorize each user to their respective active level.
+
 
 ```
 activity_user_type <- daily_average %>%
@@ -322,7 +331,9 @@ user_type <- activity_user_type %>%
     group_by(activity_user_type) %>%
     summarise(user_percent = total / totals) %>%
     mutate(percent = scales::percent(user_percent))
-  
+```
+#formattable use to turn chr to percent
+```
 user_type <- user_type %>% mutate(percent=percent(user_percent))
 ```
 
@@ -333,13 +344,7 @@ ggplot(user_type,aes(fill=activity_user_type,y = percent,x = "")) +
   scale_fill_brewer(palette="Set2") +
   theme_void() +
   geom_text(aes(label = percent, x=1),position = position_stack(vjust = 0.5)) +
-  theme(axis.title.x= element_blank(),
-        axis.title.y = element_blank(),
-        panel.border = element_blank(), 
-        panel.grid = element_blank(), 
-        axis.ticks = element_blank(),
-        axis.text.x = element_blank(),
-        plot.title = element_text(hjust = 0.5, vjust = -5, size = 15, family="TT Times New Roman", face = "bold")) +
+  theme(plot.title = element_text(hjust = 0.5, vjust = -5, size = 15, family="TT Times New Roman", face = "bold")) +
   labs(title = "User Type Distribution") +
   guides(fill = guide_legend(title = "User Type Distribution"))
 ```
