@@ -182,12 +182,10 @@ sleep_percent <- sleep_log%>%
   group_by(sleep_log) %>%
   summarise(sleep_percent = total / totals) %>%
   mutate(percent = scales::percent(sleep_percent))
-  
+``` 
 #formattable use to turn chr to percent
 ```
 sleep_percent <- sleep_percent %>% mutate(percent=percent(sleep_percent))
-```
- 
 ```
 Let's plot the graph to see the sleep distribution of the users
 ```
