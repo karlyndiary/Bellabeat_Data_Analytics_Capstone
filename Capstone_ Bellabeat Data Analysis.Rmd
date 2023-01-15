@@ -31,7 +31,7 @@ library(ggplot2)
 library(formattable)
 ```
 
-### 2.1 Loading Datasets
+### 2.2 Loading Datasets
 
 ```{r load datasets}
 daily_activity <- read.csv("/cloud/project/dailyActivity_merged.csv")
@@ -39,7 +39,7 @@ sleep_day <- read.csv("/cloud/project/sleepDay_merged.csv")
 weight_log_info <- read.csv("/cloud/project/weightLogInfo_merged.csv")
 ```
 
-### 2.2 Summary of dataframes
+### 2.3 Summary of dataframes
 ```{r explore dataframes}
 head(daily_activity) 
 head(sleep_day)
