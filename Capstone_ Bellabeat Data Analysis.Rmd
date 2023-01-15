@@ -249,7 +249,7 @@ weight_bmi_percent <- weight_log_users %>%
   summarise(bmi_percent = total / totals) %>%
   mutate(percent = scales::percent(bmi_percent))
 ```
-#formattable use to turn chr to percent
+#Formattable use to turn chr to percent
 ```{r}
 weight_bmi_percent <- weight_bmi_percent %>% mutate(percent=percent(bmi_percent))
 
@@ -325,7 +325,7 @@ user_type <- activity_user_type %>%
     summarise(user_percent = total / totals) %>%
     mutate(percent = scales::percent(user_percent))
 ```
-Formattable use to turn chr to percent
+#Formattable use to turn chr to percent
 ```{r}
 user_type <- user_type %>% mutate(percent=percent(user_percent))
 
