@@ -45,6 +45,7 @@ We are not sure if the thirty users are handpicked or called at random for the p
 install.packages('tidyverse') #used for data cleaning
 install.packages('lubridate') #for date & time formats
 install.packages('janitor') #used for cleaning data
+install.packages('formattable')
 ```
 
 ```bash
@@ -145,7 +146,6 @@ Let's take a look at how total steps taken will influence how many hours the use
   ![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..7bUx0B3-P2anyMF-cJdrmA.Ha9AJv4uHj-xFqDi9RGy3Rac0dCdnVaapYTPve4FxsJ3bVnMQFlCm5nxDJ4LIqChlv-Nnb6pdU8cAxkZkPYaL8UY4qBD-DXCAH5Q1dg1qyjNr_M4ZhDqpZ72W-0lflQaKeDjlVJ1UVWcNNoMYCwTWMrjh60Ec8tyoqG_n16VRleEyYMf5hLftHCCmp-HTeHL3mbtwSF27mVs4K_6acxS2zTiLVAefzLm6SAZM5IjIKicwsrGQXyBxra2itlyC5m8dEAfRCFpaY-1K-9e649iYttTZ8J3x0HHlGx5ikZCmwG-wb4NdVWdxmG6iKBL7QjYI4O0MUQQVN9qK1LLMxwugP6Km_AunYILtaS98rbb3N5x8MEnBwHOdx3uBxRV52osrfH70sEqnNzBkO7fbPPo_8kFy5dLqWnsbP6Cc6O9oHoZP9bVNTQMJxykuMTE-m2j0ZSVrH19hiWJKzPP55tG5HHUGxgjucvQXE1jteA5_4l8mmVzLHJPEFIMOycXojZlGI0vXY6CxUm9EkNv9LBnFphB7myL9PGv88kRRoqclU5e7N-WqhUNFUWY3fE2AxYoEkzRyOeA8gC8tqoVxyvM-fhQtGAmpmNlzCQn5uJfSBK9ir5erIILJCnfCDpKWAGRP05o-BntXSQUT__UFHY39hdo4WUQv0pUyQgmSpEcNhwfSY4WMScTV6DEGT3T205L.rnb5xXM2dJdWxrzJZWCBpQ/__results___files/__results___38_1.png)
   
 We observe from the graph that the Total steps taken don’t necessarily mean that the person will have a better sleep or the number of hours would be longer than usual.
-
  
 **4.2 Total Steps Vs weekends**
 
@@ -192,7 +192,7 @@ sleep_percent <- sleep_log%>%
   summarise(sleep_percent = total / totals) %>%
   mutate(percent = scales::percent(sleep_percent))
 ``` 
-#formattable use to turn chr to percent
+Formattable use to turn chr to percent
 ```
 sleep_percent <- sleep_percent %>% mutate(percent=percent(sleep_percent))
 ```
@@ -262,7 +262,7 @@ weight_bmi_percent <- weight_log_users %>%
   summarise(bmi_percent = total / totals) %>%
   mutate(percent = scales::percent(bmi_percent))
 ```
-#formattable use to turn chr to percent
+Formattable use to turn chr to percent
 ```
 weight_bmi_percent <- weight_bmi_percent %>% mutate(percent=percent(bmi_percent))
 ```
@@ -339,7 +339,7 @@ user_type <- activity_user_type %>%
     summarise(user_percent = total / totals) %>%
     mutate(percent = scales::percent(user_percent))
 ```
-#formattable use to turn chr to percent
+Formattable use to turn chr to percent
 ```
 user_type <- user_type %>% mutate(percent=percent(user_percent))
 ```
