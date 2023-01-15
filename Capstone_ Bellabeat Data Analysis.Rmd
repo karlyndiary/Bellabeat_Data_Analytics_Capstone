@@ -14,13 +14,21 @@ This document outlines all of the steps taken to clean and transform Bellabeats'
 
 ## 2. Loading necessary libraries and datasets
 
-### 2.1 Loading libraries
-```{r load packages}
+### 2.1 Loading Packages and Libraries
+```{r}
+#Installing the packages
+install.packages('tidyverse') #used for data cleaning
+install.packages('lubridate') #for date & time formats
+install.packages('janitor') #used for cleaning data
+install.packages('formattable')
+
+#Loading Libraries
 library(tidyverse) #drop_na()
 library(lubridate)
 library(janitor) #clean_names()
 library(dplyr)
 library(ggplot2)
+library(formattable)
 ```
 
 ### 2.1 Loading Datasets
@@ -31,30 +39,30 @@ sleep_day <- read.csv("/cloud/project/sleepDay_merged.csv")
 weight_log_info <- read.csv("/cloud/project/weightLogInfo_merged.csv")
 ```
 
-## 3. Exploring and Cleaning the data
-
-### 3.1 Summary of dataframes
+### 2.2 Summary of dataframes
 ```{r explore dataframes}
-str(daily_activity) 
-str(sleep_day)
-str(weight_log_info) 
+head(daily_activity) 
+head(sleep_day)
+head(weight_log_info) 
 ```
 
-### 3.2 Changing case from camel case to snake case
+## 3. Exploring and Cleaning the data
+
+### 3.1 Changing case from camel case to snake case
 ```{r changing case}
 daily_activity <- clean_names(daily_activity)
 sleep_day <- clean_names(sleep_day)
 weight_log_info <- clean_names(weight_log_info)
 ```
 
-### 3.3 Checking for duplicates
+### 3.2 Checking for duplicates
 ```{r}
 sum(duplicated(daily_activity))
 sum(duplicated(sleep_day))
 sum(duplicated(weight_log_info))
 ```
 
-### 3.4 Deleting duplicates
+### 3.3 Deleting duplicates
 ```{r}
 # Before deleting duplicates
 nrow(sleep_day)
@@ -68,14 +76,14 @@ sleep_day <- sleep_day %>%
 nrow(sleep_day)
 ```
 
-### 3.5 Changing datatype for date from char to date datatype
+### 3.4 Changing datatype for date from char to date datatype
 ```{r Changing datatype for date from char to date datatype}
 daily_activity$activity_date <- as.Date(daily_activity$activity_date,'%m/%d/%y')
 sleep_day$sleep_day <- as.Date(sleep_day$sleep_day,'%m/%d/%y')
 weight_log_info$date <- as.Date(weight_log_info$date,'%m/%d/%y')
 ```
 
-### 3.6 Renaming column activity_date and sleep_day to date
+### 3.5 Renaming column activity_date and sleep_day to date
 ```{r renaming column activity_date and sleep_day to date}
 daily_activity <- daily_activity %>%
   rename(date = activity_date)
@@ -84,46 +92,48 @@ sleep_day <- sleep_day %>%
   rename(date = sleep_day)
 ```
 
-### 3.7 Converting minutes to hours for total_minutes_asleep
+### 3.6 Converting minutes to hours for total_minutes_asleep
 ```{r}
 #total hours asleep
 sleep_day$total_hours_asleep = round((sleep_day$total_minutes_asleep)/60, digits = 2)
 
-str(sleep_day)
+head(sleep_day)
 ```
-### 3.8 Dropping total_minutes_asleep in sleep_day dataset
+
+### 3.7 Dropping total_minutes_asleep in sleep_day dataset
 ```
 sleep_day = subset(sleep_day, select = -c(total_minutes_asleep))
 ```
 
-### 3.9 Formatting String datatype to Boolean datatype
+### 3.8 Formatting String datatype to Boolean datatype
 ```{r}
 weight_log_info$is_manual_report <- as.logical(weight_log_info$is_manual_report)
 
-str(weight_log_info)
+head(weight_log_info)
 ```
-### 3.10 Creating a new column for weekdays
+
+### 3.9 Creating a new column for weekdays
 ```{r}
 # Adding a new column for weekdays
 daily_activity$day_of_week <- wday(daily_activity$date, label = T, abbr = T)
 
 # After adding the weekday column
-str(daily_activity)
+head(daily_activity)
 ```
 
-### 3.11 Merging daily_activity and sleep_day dataset
+### 3.10 Merging daily_activity and sleep_day dataset
 ```{r}
 daily_activity_sleep <- merge(daily_activity, sleep_day, by=c ("id", "date"))
 daily_activity_weight <- merge(daily_activity, weight_log_info, by=c ("id", "date"))
 
-str(daily_activity_sleep)
-str(daily_activity_weight)
+head(daily_activity_sleep)
+head(daily_activity_weight)
 ```
 
 ## 4 Analysis
 
 ### 4.1 Total Steps Vs Sleep
-```{r amount of sleep gained by the total steps taken}
+```{r}
 ggplot(data = daily_activity_sleep) +
   aes(x=total_steps, y = total_hours_asleep) +
   geom_point(color = '#004c6d') +
@@ -136,7 +146,7 @@ ggsave('Total Steps vs Total Minutes Asleep.png')
 ```
 
 ## 4.2 Total Steps Vs Weekday
-```{r total steps taken in a week}
+```{r}
 #options(scipen=) will remove any scientific notations
 options(scipen = 999)
 
@@ -152,7 +162,7 @@ ggsave("Total no of steps taken in a week.png")
 ```
 
 ## 4.3 Sleep Distribution
-```{r finding how many hours of sleep each user gets}
+```{r}
 sleep_log <- sleep_day%>%
   mutate(sleep_log = case_when( 
      total_hours_asleep < 7 ~ "Less than 7 hours",
@@ -160,11 +170,11 @@ sleep_log <- sleep_day%>%
      total_hours_asleep >= 8 ~ "More than 8 hours"
   ))
 
-str(sleep_log)
+head(sleep_log)
 ```
 
-```{r finding the percentage of sleep}
-# percentage 
+#percentage 
+```{r}
 sleep_percent <- sleep_log%>%
   group_by(sleep_log) %>%
   summarise(total = n()) %>%
@@ -176,7 +186,7 @@ sleep_percent <- sleep_log%>%
 head(sleep_percent)
 ```
 
-```{r sleep distribution}
+```{r}
 ggplot(data=sleep_percent) + 
   geom_col(mapping = aes(x=sleep_log,y=percent, fill=sleep_log)) + 
   theme(panel.border = element_rect(colour = "black", fill=NA)) +
@@ -188,7 +198,7 @@ ggsave("Sleep Distribution.png")
 ```
 
 ## 4.4 Total Steps Vs Calories
-```{r total stesp taken to burn calories}
+```{r}
 daily_activity_sleep %>% 
   group_by(total_steps, calories) %>% 
   ggplot(aes(x = total_steps, y = calories, color = calories)) +
@@ -205,8 +215,9 @@ daily_activity_sleep %>%
 
 ggsave("Calories Burned by Total Steps Taken.png")
 ```
+
 ## 4.5 BMI Distribution
-```{r determine if the user is healthy, underweight or obese}
+```{r}
 weight_log_bmi <- weight_log_info %>%
   mutate(bmi_log = case_when( 
     bmi < 18.5 ~ "Underweight",
@@ -215,16 +226,17 @@ weight_log_bmi <- weight_log_info %>%
     bmi >= 30 ~ "Obesity",
   ))
 
-str(weight_log_bmi)
+head(weight_log_bmi)
 ```
-### Distinct users
-```{r list of all unique users}
+
+### 4.5.1 Distinct users
+```{r}
 weight_log_users <- weight_log_bmi %>% distinct(id, .keep_all = TRUE)
 weight_log_bmi %>% group_by(id) %>% filter(row_number() == 1)
 ```
 
-### Percentage 
-```{r weight percentage of each user}
+### 4.5.2 Percentage 
+```{r}
 weight_bmi_percent <- weight_log_users %>%
   group_by(bmi_log) %>%
   summarise(total = n()) %>%
@@ -232,30 +244,28 @@ weight_bmi_percent <- weight_log_users %>%
   group_by(bmi_log) %>%
   summarise(bmi_percent = total / totals) %>%
   mutate(percent = scales::percent(bmi_percent))
+  
+#formattable use to turn chr to percent
+weight_bmi_percent <- weight_bmi_percent %>% mutate(percent=percent(bmi_percent))
 
 head(weight_bmi_percent)
 ```
 
-### BMI Distribution
-```{r bmi distribution}
+### 4.5.3 BMI Distribution
+```{r}
 ggplot(weight_bmi_percent,aes(fill=bmi_log,y = percent,x = "")) +
   geom_bar(stat = "identity", width = 1, color = "white") +
   coord_polar("y", start = 0) +
   scale_fill_brewer(palette="Set2") +
   theme_void() +
   geom_text(aes(label = percent, x=1),position = position_stack(vjust = 0.5)) +
-  theme(axis.title.x= element_blank(),
-        axis.title.y = element_blank(),
-        panel.border = element_blank(), 
-        panel.grid = element_blank(), 
-        axis.ticks = element_blank(),
-        axis.text.x = element_blank(),
-        plot.title = element_text(hjust = 0.5, vjust = -5, size = 15, family="TT Times New Roman", face = "bold")) +
+  theme(plot.title = element_text(hjust = 0.5, vjust = -5, size = 15, family="TT Times New Roman", face = "bold")) +
   labs(title = "BMI Distribution") +
   guides(fill = guide_legend(title = "BMI Distribution"))
 
 ggsave("BMI Distribution.png")
 ```
+
 ## 4.6 Weight Vs Total Steps
 ```{r}
 ggplot(data = daily_activity_weight) +
@@ -268,6 +278,7 @@ ggplot(data = daily_activity_weight) +
 
 ggsave("weight vs total steps.png")
 ```
+
 ## 4.7 User Type Distribution
 ```{r}
 daily_average <- daily_activity_sleep %>%
@@ -278,6 +289,13 @@ daily_average <- daily_activity_sleep %>%
 
 head(daily_average)
 ```
+#According to 10000 steps,
+
+#Sedentary: Less than 5,000 steps per day
+#Low active: Between 5,000 to 7,499 steps per day
+#Somewhat active: Between 7,500 to 9,999 steps per day
+#Active: More than 10,000 steps per day
+#Highly active: More than 12,500
 
 ```{r}
 activity_user_type <- daily_average %>%
@@ -291,6 +309,7 @@ activity_user_type <- daily_average %>%
 
 head(activity_user_type)
 ```
+#Now that we have put the users in different active levels based on the mean total number of steps taken. Let's find out the percentages for the same.
 
 ```{r}
 user_type <- activity_user_type %>%
@@ -303,8 +322,10 @@ user_type <- activity_user_type %>%
   
 user_type <- user_type %>% mutate(percent=percent(user_percent))
 
-str(user_type)
+head(user_type)
 ```
+
+#Let's plot a pie chart to see the different active levels and which of each level is highest and which is the lowest.
 
 ```{r}
 ggplot(user_type,aes(fill=activity_user_type,y = percent,x = "")) +
@@ -313,13 +334,7 @@ ggplot(user_type,aes(fill=activity_user_type,y = percent,x = "")) +
   scale_fill_brewer(palette="Set2") +
   theme_void() +
   geom_text(aes(label = percent, x=1),position = position_stack(vjust = 0.5)) +
-  theme(axis.title.x= element_blank(),
-        axis.title.y = element_blank(),
-        panel.border = element_blank(), 
-        panel.grid = element_blank(), 
-        axis.ticks = element_blank(),
-        axis.text.x = element_blank(),
-        plot.title = element_text(hjust = 0.5, vjust = -5, size = 15, family="TT Times New Roman", face = "bold")) +
+  theme(plot.title = element_text(hjust = 0.5, vjust = -5, size = 15, family="TT Times New Roman", face = "bold")) +
   labs(title = "User Type Distribution") +
   guides(fill = guide_legend(title = "User Type Distribution"))
   
