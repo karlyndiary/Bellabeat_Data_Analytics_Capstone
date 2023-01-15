@@ -65,21 +65,27 @@ weight_log_info <- read.csv("/cloud/project/weightLogInfo_merged.csv")
 ### 3.3 Exploring the dataframe
 The Summary of daily_activity, sleep_day and weight_log_info.
 ```bash
-str(daily_activity) 
-str(sleep_day) 
-str(weight_log_info) 
+head(daily_activity) 
+head(sleep_day) 
+head(weight_log_info) 
 ```
 ### 3.4 Cleaning and formatting the datasets
-Converting the snakeCase to camel_case for the three main datasets
+3.4.1 Converting the snakeCase to camel_case for the three main datasets
 ```bash
 daily_activity <- clean_names(daily_activity)
 sleep_day <- clean_names(sleep_day)
 weight_log_info <- clean_names(weight_log_info)
 ```
-Checking and removing duplicates
+3.4.2 Checking for duplicates
 ```bash
-#To check for duplicates
+sum(duplicated(daily_activity))
 sum(duplicated(sleep_day))
+sum(duplicated(weight_log_info))
+```
+3.4.3 Deleting duplicates
+```bash
+# Before deleting duplicates
+nrow(sleep_day)
 
 #To clear duplicates
 sleep_day <- sleep_day %>%
@@ -89,13 +95,13 @@ sleep_day <- sleep_day %>%
 #After deleting duplicates
 nrow(sleep_day)
 ```
-Formatting String Date datatype to Date time datatype for daily_activity, sleep_day and weight_log_info
+3.4.4 Formatting String Date datatype to Date time datatype
 ```bash
 daily_activity$activity_date <- as.Date(daily_activity$activity_date,'%m/%d/%y')
 sleep_day$sleep_day <- as.Date(sleep_day$sleep_day,'%m/%d/%y')
 weight_log_info$date <- as.Date(weight_log_info$date,'%m/%d/%y')
 ```
-Renaming the data column for daily_activity and sleep_day datasets
+3.4.5 Renaming the data column for daily_activity and sleep_day datasets
 ```bash
 daily_activity <- daily_activity %>%
   rename(date = activity_date)
@@ -103,32 +109,31 @@ daily_activity <- daily_activity %>%
 sleep_day <- sleep_day %>%
   rename(date = sleep_day)
   ```
-Converting minutes to hours for total_minutes_asleep in sleep_day dataset
+3.4.6 Converting minutes to hours for total_minutes_asleep in sleep_day dataset
 ```bash
 sleep_day$total_hours_asleep = round((sleep_day$total_minutes_asleep)/60, digits = 2)
   ```
-Dropping total_minutes_asleep in sleep_day dataset
+3.4.7 Dropping total_minutes_asleep in sleep_day dataset
 ```
 sleep_day = subset(sleep_day, select = -c(total_minutes_asleep))
 ```
-
-Formatting String datatype to Boolean datatype in weight_log_info dataset
+3.4.8 Formatting String datatype to Boolean datatype in weight_log_info dataset
   ```bash
 weight_log_info$is_manual_report <- as.logical(weight_log_info$is_manual_report)
   ```
-Creating a new column for weekdays to daily_activity
+3.4.9 Creating a new column for weekdays in daily_activity dataset
   ```bash
 daily_activity$day_of_week <- wday(daily_activity$date, label = T, abbr = T)
   ```
-  Merging daily_activity and sleep_day dataset to daily_activity_sleep and daily_activity and weight_log_info to daily_activity_weight
+3.4.10 Merging daily_activity and sleep_day dataset to daily_activity_sleep and daily_activity and weight_log_info to daily_activity_weight
   ```bash
 daily_activity_sleep <- merge(daily_activity, sleep_day, by=c ("id", "date"))
 daily_activity_weight <- merge(daily_activity, weight_log_info, by=c ("id", "date"))
   ```
-  ## 4. Analyze and Share
-  **Total Steps Vs Sleep**
+## 4. Analyze and Share
+**4.1 Total Steps Vs Sleep**
 
-  Let’s take a look at how Total steps will influence sleep
+Let's take a look at how total steps taken will influence how many hours the user will sleep.
 ```bash
   ggplot(data = daily_activity_sleep) +
     aes(x=total_steps, y = total_hours_asleep) +
@@ -138,13 +143,17 @@ daily_activity_weight <- merge(daily_activity, weight_log_info, by=c ("id", "dat
     title = 'Total Steps vs Total Hours Asleep')
   ```
   ![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..7bUx0B3-P2anyMF-cJdrmA.Ha9AJv4uHj-xFqDi9RGy3Rac0dCdnVaapYTPve4FxsJ3bVnMQFlCm5nxDJ4LIqChlv-Nnb6pdU8cAxkZkPYaL8UY4qBD-DXCAH5Q1dg1qyjNr_M4ZhDqpZ72W-0lflQaKeDjlVJ1UVWcNNoMYCwTWMrjh60Ec8tyoqG_n16VRleEyYMf5hLftHCCmp-HTeHL3mbtwSF27mVs4K_6acxS2zTiLVAefzLm6SAZM5IjIKicwsrGQXyBxra2itlyC5m8dEAfRCFpaY-1K-9e649iYttTZ8J3x0HHlGx5ikZCmwG-wb4NdVWdxmG6iKBL7QjYI4O0MUQQVN9qK1LLMxwugP6Km_AunYILtaS98rbb3N5x8MEnBwHOdx3uBxRV52osrfH70sEqnNzBkO7fbPPo_8kFy5dLqWnsbP6Cc6O9oHoZP9bVNTQMJxykuMTE-m2j0ZSVrH19hiWJKzPP55tG5HHUGxgjucvQXE1jteA5_4l8mmVzLHJPEFIMOycXojZlGI0vXY6CxUm9EkNv9LBnFphB7myL9PGv88kRRoqclU5e7N-WqhUNFUWY3fE2AxYoEkzRyOeA8gC8tqoVxyvM-fhQtGAmpmNlzCQn5uJfSBK9ir5erIILJCnfCDpKWAGRP05o-BntXSQUT__UFHY39hdo4WUQv0pUyQgmSpEcNhwfSY4WMScTV6DEGT3T205L.rnb5xXM2dJdWxrzJZWCBpQ/__results___files/__results___38_1.png)
-  We observe from the graph that the Total steps taken don’t necessarily mean that the person will have a better sleep.
- 
- **Total Steps Vs weekends**
+  
+We observe from the graph that the Total steps taken don’t necessarily mean that the person will have a better sleep or the number of hours would be longer than usual.
 
+ 
+**4.2 Total Steps Vs weekends**
+
+We shall now take a look at which day the users are most and least active.
+```
   #options(scipen=) will remove any scientific notations
 options(scipen = 999)
-```
+
 ggplot(data=daily_activity_sleep) + 
   geom_col(mapping = aes(x=day_of_week,y=total_steps, fill=day_of_week)) + 
   theme(panel.border = element_rect(colour = "black", fill=NA)) +
@@ -155,9 +164,9 @@ ggplot(data=daily_activity_sleep) +
   ```
  ![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..cuQr6xdllkrQpq-NAr9ZrA.8QouZNgsYzo3g-c-7tOtS4l661qsRjVSF3XyFLZ4bepkDiRQ1q1cE_gLkzNH4eND_cnxkE1LwI-d2jvJ44OIx0zJ1wnW4e8EcJzd3xPJcBgeUt7m7Sp9p2rt-J4cbaCPB0hrnrop6MAReHhLCs7rSCUdZR5mVG6ysYOzy5yWHjGgSNbBEogJ5MBnfnKM74xiyO0pZu76nSLgSxwmN2DPiu8mqWucGSJrKWJrDxBb7BTRmrx-kw66FvF1m8jyftEj8EEmDGPhPtoDMdvpxs73H73N9KRnY3WVDGB1vfonkdi_l2z12gp6Q9gpHEDG8Nux96MlKQWQLWYkkWleQtugRdvGFN5e2KRAXEJoeC3wTO5dgKVcvGEkd0Wu157VR8-ung2OggQ67IzUmrtjdFbgsIe7WdnPuBvr-B-BP5w3AYXqhBUqPoxQvDXrOVFCteqInkr5bSHy4IOc-k3VPqFjYJ-1aFfIJnrFWRUP4L0y3DXUXyDp_tFNuYiIvNRQ47NoBnN_BpRA1F2OKJmY3bLWxWnxhzwJJ8h4DKrWuTsSa46NcQvamBj1bj12d9T_kbxvbyUeYw55wDxg-GLJNYfOjJEWGgz9q-rRd-1JW4Px84ojpiU1qo1z70xfiCqVcG9jesYSqbvRvv2gBi6uKl8wDa0Pdh8X57NmKWD_N3RY2BXrG0TqUq2pDb3Xv5jlBd2k.JYXUuuHA-Z_wUWbiE_2oOQ/__results___files/__results___40_1.png)
 
-  We can see that the users are most active when the weekend starts and the activity level declines as the week progresses. This could be because of a busy schedule or motivation level.
+We can see that the users are most active when the weekend starts and the activity level declines as the week progresses. This could be because of a busy schedule or motivation.
 
-**Sleep Distribution**
+**4.3 Sleep Distribution**
 
 According to [Mayoclinic](https://www.mayoclinic.org/healthy-lifestyle/adult-health/expert-answers/how-many-hours-of-sleep-are-enough/faq-20057898), if one gets:
 
@@ -173,7 +182,7 @@ sleep_log <- sleep_day%>%
      total_hours_asleep >= 8 ~ "More than 8 hours"
   ))
   ```
-Finding the percentage for the range
+Now we shall find the percentage of users for each category.
 ```
 sleep_percent <- sleep_log%>%
   group_by(sleep_log) %>%
@@ -187,7 +196,7 @@ sleep_percent <- sleep_log%>%
 ```
 sleep_percent <- sleep_percent %>% mutate(percent=percent(sleep_percent))
 ```
-Let's plot the graph to see the sleep distribution of the users
+With sleep_log and percent, let's visualize it in a pie chart.
 ```
 ggplot(data=sleep_percent) + 
   geom_col(mapping = aes(x=sleep_log,y=percent, fill=sleep_log)) + 
@@ -196,11 +205,13 @@ ggplot(data=sleep_percent) +
   theme(legend.position="none") +
   labs(x = 'Total Hours Asleep', y = 'Percent', title = 'Sleep Distribution')
 ```
-![image](https://www.kaggleusercontent.com/kf/116335165/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..WYQ1o5vgxR1Z6zdhSUTt8w.rYcHOdZ7RYozWkXFp1LV2LMNFFeMnm0grTUj8qvrzUd54GSlcokuTPrRfRc82WjojQIRAJ2Zgo2vDHqZqU8_MoYapjPJAGlNOBopgdTNjAFuHIgXcPNp9Tin8Il5H7b9pzdpVIRFF4ihOiLpe6sQUj-PPirl2OM08vU_zSdQENYE7gthBXizrsyZRTVHZGVPSnAzZLshxx_6fu0vRtQe-_q15sKuBEI8uU7xR9sEyxO6LyM30Ug9N6-hjjuoncRw4OMWpqQ9tQbgFx_DKzmYj-EwixnMqArg-tOK13PxkBJcnqP7NgUDN2wNw5zVEiGrH_HwYBKuisAsU_uiSoX479OrxUqrIKvTHFBweehdhV6-2BMzPyPvW-mcjgM7DUTIKELNeOo4yw1rUAbhK4vMLPGKKYHPrsxQRjrr4RzZ077kT9tkee5LrbwECnwATNweDYLfKmsRJ7JfC8LByrzOGZl4IuJYMYn8bVMeTcjSReJlNwxPQj68SuUiMj_sPTDsZNwqmmCksaVMmID4nbixIGbfP9thfVipLA3jLcBlL_0DpvLGPSDSQjyoEl7QWAQwd1zglhq4pvEjYcJ2UlMf1znkB7abH6WuPdRjT2hw5oEubvbjVJmNKkZwxzrOqZIATy1S1Ux_eJASQBf9idp5i_Gl1JbArgqjyb3t5shq3nARvpgV00WH1DcxaUtoKJh8.cU6wqUGEqA-xou9EUu3NoA/__results___files/__results___48_1.png)
+![image](https://www.kaggleusercontent.com/kf/116335165/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..If5VLmG4vgKShUdtmwQ8qw.66RXmZf_wWIXvIhVzEuvcdSxsjWysWuj_yNE1YevJEv2Hs4q1fqdc4GEuPuAMMP2Hji_yP8HCruO4_h7fR8BEYxkGOX-vJShwaSSlE_ozG150Vkczqw1VPFqKq83n0GpIEdTX8ffrp1ZVPFi2Q8NC1GHVIkVtTnDsiSNmP4yWhLGWn47X8A3sXfYe4TMQtkvOn5DHXQUooHlx5N3XhzUwi3-VOAVHTDDF9AM7sd9rbgtPjdoi-2e4ANMxRIfZKlKOSRn7zY3nPbEI4bxNvrph21mDxkW_N1NEuiHgQiRc6alrT4T_cfLjAezQAqSC8Q6h2V_FnbpJCumWDt7o97L2QBHboyytsLt5eH6ActeNusBMi73oY3lCd05av6pq44Xtr1_-0VUUJ5yfgkZoBYXYktIt_DPv3LFeb5-W4HYjsgrqO80GJ6X13ZpUOtlARKkh8awEwUfJPmvDZtOQAJLYj0-c491VFORkGSEmCZhp1Z1EMWr6av1dlMnvJDTr6m3alF2jXsZAG2p3GLELSQEjB3lILfFY3EqFoQ3I20-rYYb8IqBLN6nOyTNhn0U9yMzmvRqMDtBTKXv_FquWrT8ouPa2WJkcr-CxLENLzjGW_kaBYLPq3faUf_MN_xgiZ-I55CdnvXuA4v2FTwzEroQJak_Pkf1f_Xy2ppc-uXVitivLARDW_wqDxubcwtcYhJ_.j1yTDo7M_1XBIw5Ig_w-VA/__results___files/__results___48_1.png)
 
-From the bar chart, we can see that only about 27% of the users sleep for a sufficient amount of 7 to 8 hours whereas 44% sleep for less than 7 hours.
+From the pie chart, we can see that only about 27% of the users sleep for a sufficient amount of 7 to 8 hours whereas 44% sleep for less than 7 hours.
 
-**Total Steps Vs Calories**
+**4.4 Total Steps Vs Calories**
+
+Based on the number of steps the user has taken, let's find out how many calories they have burned and if there is a correlation between the two.
 ```
 daily_activity_sleep %>% 
   group_by(total_steps, calories) %>% 
@@ -216,10 +227,11 @@ daily_activity_sleep %>%
        y = 'Calories',
        x = 'Total Steps')
 ```
-![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..7bUx0B3-P2anyMF-cJdrmA.Ha9AJv4uHj-xFqDi9RGy3Rac0dCdnVaapYTPve4FxsJ3bVnMQFlCm5nxDJ4LIqChlv-Nnb6pdU8cAxkZkPYaL8UY4qBD-DXCAH5Q1dg1qyjNr_M4ZhDqpZ72W-0lflQaKeDjlVJ1UVWcNNoMYCwTWMrjh60Ec8tyoqG_n16VRleEyYMf5hLftHCCmp-HTeHL3mbtwSF27mVs4K_6acxS2zTiLVAefzLm6SAZM5IjIKicwsrGQXyBxra2itlyC5m8dEAfRCFpaY-1K-9e649iYttTZ8J3x0HHlGx5ikZCmwG-wb4NdVWdxmG6iKBL7QjYI4O0MUQQVN9qK1LLMxwugP6Km_AunYILtaS98rbb3N5x8MEnBwHOdx3uBxRV52osrfH70sEqnNzBkO7fbPPo_8kFy5dLqWnsbP6Cc6O9oHoZP9bVNTQMJxykuMTE-m2j0ZSVrH19hiWJKzPP55tG5HHUGxgjucvQXE1jteA5_4l8mmVzLHJPEFIMOycXojZlGI0vXY6CxUm9EkNv9LBnFphB7myL9PGv88kRRoqclU5e7N-WqhUNFUWY3fE2AxYoEkzRyOeA8gC8tqoVxyvM-fhQtGAmpmNlzCQn5uJfSBK9ir5erIILJCnfCDpKWAGRP05o-BntXSQUT__UFHY39hdo4WUQv0pUyQgmSpEcNhwfSY4WMScTV6DEGT3T205L.rnb5xXM2dJdWxrzJZWCBpQ/__results___files/__results___46_1.png)
+![image](https://www.kaggleusercontent.com/kf/116335165/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..If5VLmG4vgKShUdtmwQ8qw.66RXmZf_wWIXvIhVzEuvcdSxsjWysWuj_yNE1YevJEv2Hs4q1fqdc4GEuPuAMMP2Hji_yP8HCruO4_h7fR8BEYxkGOX-vJShwaSSlE_ozG150Vkczqw1VPFqKq83n0GpIEdTX8ffrp1ZVPFi2Q8NC1GHVIkVtTnDsiSNmP4yWhLGWn47X8A3sXfYe4TMQtkvOn5DHXQUooHlx5N3XhzUwi3-VOAVHTDDF9AM7sd9rbgtPjdoi-2e4ANMxRIfZKlKOSRn7zY3nPbEI4bxNvrph21mDxkW_N1NEuiHgQiRc6alrT4T_cfLjAezQAqSC8Q6h2V_FnbpJCumWDt7o97L2QBHboyytsLt5eH6ActeNusBMi73oY3lCd05av6pq44Xtr1_-0VUUJ5yfgkZoBYXYktIt_DPv3LFeb5-W4HYjsgrqO80GJ6X13ZpUOtlARKkh8awEwUfJPmvDZtOQAJLYj0-c491VFORkGSEmCZhp1Z1EMWr6av1dlMnvJDTr6m3alF2jXsZAG2p3GLELSQEjB3lILfFY3EqFoQ3I20-rYYb8IqBLN6nOyTNhn0U9yMzmvRqMDtBTKXv_FquWrT8ouPa2WJkcr-CxLENLzjGW_kaBYLPq3faUf_MN_xgiZ-I55CdnvXuA4v2FTwzEroQJak_Pkf1f_Xy2ppc-uXVitivLARDW_wqDxubcwtcYhJ_.j1yTDo7M_1XBIw5Ig_w-VA/__results___files/__results___51_1.png)
+
 From the graph, we can see that there is a correlation between Total Steps and Calories. When the user takes more number of steps, more calories are burned.
 
-**BMI Distribution**
+**4.5 BMI Distribution**
 
 According to standard BMI values from [hdfclife](https://www.hdfclife.com/financial-tools-calculators/bmi-calculator) we have,
 
@@ -236,14 +248,11 @@ weight_log_bmi <- weight_log_info %>%
     bmi >= 30 ~ "Obesity",
   ))
 ```
-Finding the list of distinct users
+Now that we've classified the users by their BMIs. Let's focus on the different users and their BMI ranges.
 ```
 weight_log_users <- weight_log_bmi %>% distinct(id, .keep_all = TRUE)
-weight_log_bmi %>% group_by(id) %>% filter(row_number() == 1)
 ```
-Returned with 8 distinct users who have entered their weight.
-
-Finding the percentage of each of the previous range
+Here we see that there are 8 users who've logged their weight in.
 ```
 weight_bmi_percent <- weight_log_users %>%
   group_by(bmi_log) %>%
@@ -253,9 +262,11 @@ weight_bmi_percent <- weight_log_users %>%
   summarise(bmi_percent = total / totals) %>%
   mutate(percent = scales::percent(bmi_percent))
 ```
-We found that 25% of the users are of Normal weight, 12% obese and 62% are Overweight.
-
-Let's plot a pie chart for the same.
+#formattable use to turn chr to percent
+```
+weight_bmi_percent <- weight_bmi_percent %>% mutate(percent=percent(bmi_percent))
+```
+There are 62% overweight people and 25% normal people. To see it better, let's plot a graph.
 ```
 ggplot(weight_bmi_percent,aes(fill=bmi_log,y = percent,x = "")) +
   geom_bar(stat = "identity", width = 1, color = "white") +
@@ -268,11 +279,13 @@ ggplot(weight_bmi_percent,aes(fill=bmi_log,y = percent,x = "")) +
   guides(fill = guide_legend(title = "BMI Distribution"))
 
 ```
-![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..7bUx0B3-P2anyMF-cJdrmA.Ha9AJv4uHj-xFqDi9RGy3Rac0dCdnVaapYTPve4FxsJ3bVnMQFlCm5nxDJ4LIqChlv-Nnb6pdU8cAxkZkPYaL8UY4qBD-DXCAH5Q1dg1qyjNr_M4ZhDqpZ72W-0lflQaKeDjlVJ1UVWcNNoMYCwTWMrjh60Ec8tyoqG_n16VRleEyYMf5hLftHCCmp-HTeHL3mbtwSF27mVs4K_6acxS2zTiLVAefzLm6SAZM5IjIKicwsrGQXyBxra2itlyC5m8dEAfRCFpaY-1K-9e649iYttTZ8J3x0HHlGx5ikZCmwG-wb4NdVWdxmG6iKBL7QjYI4O0MUQQVN9qK1LLMxwugP6Km_AunYILtaS98rbb3N5x8MEnBwHOdx3uBxRV52osrfH70sEqnNzBkO7fbPPo_8kFy5dLqWnsbP6Cc6O9oHoZP9bVNTQMJxykuMTE-m2j0ZSVrH19hiWJKzPP55tG5HHUGxgjucvQXE1jteA5_4l8mmVzLHJPEFIMOycXojZlGI0vXY6CxUm9EkNv9LBnFphB7myL9PGv88kRRoqclU5e7N-WqhUNFUWY3fE2AxYoEkzRyOeA8gC8tqoVxyvM-fhQtGAmpmNlzCQn5uJfSBK9ir5erIILJCnfCDpKWAGRP05o-BntXSQUT__UFHY39hdo4WUQv0pUyQgmSpEcNhwfSY4WMScTV6DEGT3T205L.rnb5xXM2dJdWxrzJZWCBpQ/__results___files/__results___51_1.png)
+![image](https://www.kaggleusercontent.com/kf/116335165/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..If5VLmG4vgKShUdtmwQ8qw.66RXmZf_wWIXvIhVzEuvcdSxsjWysWuj_yNE1YevJEv2Hs4q1fqdc4GEuPuAMMP2Hji_yP8HCruO4_h7fR8BEYxkGOX-vJShwaSSlE_ozG150Vkczqw1VPFqKq83n0GpIEdTX8ffrp1ZVPFi2Q8NC1GHVIkVtTnDsiSNmP4yWhLGWn47X8A3sXfYe4TMQtkvOn5DHXQUooHlx5N3XhzUwi3-VOAVHTDDF9AM7sd9rbgtPjdoi-2e4ANMxRIfZKlKOSRn7zY3nPbEI4bxNvrph21mDxkW_N1NEuiHgQiRc6alrT4T_cfLjAezQAqSC8Q6h2V_FnbpJCumWDt7o97L2QBHboyytsLt5eH6ActeNusBMi73oY3lCd05av6pq44Xtr1_-0VUUJ5yfgkZoBYXYktIt_DPv3LFeb5-W4HYjsgrqO80GJ6X13ZpUOtlARKkh8awEwUfJPmvDZtOQAJLYj0-c491VFORkGSEmCZhp1Z1EMWr6av1dlMnvJDTr6m3alF2jXsZAG2p3GLELSQEjB3lILfFY3EqFoQ3I20-rYYb8IqBLN6nOyTNhn0U9yMzmvRqMDtBTKXv_FquWrT8ouPa2WJkcr-CxLENLzjGW_kaBYLPq3faUf_MN_xgiZ-I55CdnvXuA4v2FTwzEroQJak_Pkf1f_Xy2ppc-uXVitivLARDW_wqDxubcwtcYhJ_.j1yTDo7M_1XBIw5Ig_w-VA/__results___files/__results___59_1.png)
 
-From the graph, we can see that 62% are overweight, 12% are obese and 25% are of Normal Weight.
+According to the graph, 62% of people are overweight, 12% are obese, and 25% are normal weight.
 
-**Weight Vs Total Steps**
+**4.6 Weight Vs Total Steps**
+
+Let's take a closer look at weight and total steps to see if there is any correlation between the two.
 ```
 ggplot(data = daily_activity_weight) +
   aes(x=weight_kg, y=total_steps) +
@@ -283,15 +296,13 @@ ggplot(data = daily_activity_weight) +
        title = 'Total Steps Taken Vs Weight in Kg')
 
 ```
-![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..7bUx0B3-P2anyMF-cJdrmA.Ha9AJv4uHj-xFqDi9RGy3Rac0dCdnVaapYTPve4FxsJ3bVnMQFlCm5nxDJ4LIqChlv-Nnb6pdU8cAxkZkPYaL8UY4qBD-DXCAH5Q1dg1qyjNr_M4ZhDqpZ72W-0lflQaKeDjlVJ1UVWcNNoMYCwTWMrjh60Ec8tyoqG_n16VRleEyYMf5hLftHCCmp-HTeHL3mbtwSF27mVs4K_6acxS2zTiLVAefzLm6SAZM5IjIKicwsrGQXyBxra2itlyC5m8dEAfRCFpaY-1K-9e649iYttTZ8J3x0HHlGx5ikZCmwG-wb4NdVWdxmG6iKBL7QjYI4O0MUQQVN9qK1LLMxwugP6Km_AunYILtaS98rbb3N5x8MEnBwHOdx3uBxRV52osrfH70sEqnNzBkO7fbPPo_8kFy5dLqWnsbP6Cc6O9oHoZP9bVNTQMJxykuMTE-m2j0ZSVrH19hiWJKzPP55tG5HHUGxgjucvQXE1jteA5_4l8mmVzLHJPEFIMOycXojZlGI0vXY6CxUm9EkNv9LBnFphB7myL9PGv88kRRoqclU5e7N-WqhUNFUWY3fE2AxYoEkzRyOeA8gC8tqoVxyvM-fhQtGAmpmNlzCQn5uJfSBK9ir5erIILJCnfCDpKWAGRP05o-BntXSQUT__UFHY39hdo4WUQv0pUyQgmSpEcNhwfSY4WMScTV6DEGT3T205L.rnb5xXM2dJdWxrzJZWCBpQ/__results___files/__results___53_1.png)
+![image](https://www.kaggleusercontent.com/kf/116335165/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..If5VLmG4vgKShUdtmwQ8qw.66RXmZf_wWIXvIhVzEuvcdSxsjWysWuj_yNE1YevJEv2Hs4q1fqdc4GEuPuAMMP2Hji_yP8HCruO4_h7fR8BEYxkGOX-vJShwaSSlE_ozG150Vkczqw1VPFqKq83n0GpIEdTX8ffrp1ZVPFi2Q8NC1GHVIkVtTnDsiSNmP4yWhLGWn47X8A3sXfYe4TMQtkvOn5DHXQUooHlx5N3XhzUwi3-VOAVHTDDF9AM7sd9rbgtPjdoi-2e4ANMxRIfZKlKOSRn7zY3nPbEI4bxNvrph21mDxkW_N1NEuiHgQiRc6alrT4T_cfLjAezQAqSC8Q6h2V_FnbpJCumWDt7o97L2QBHboyytsLt5eH6ActeNusBMi73oY3lCd05av6pq44Xtr1_-0VUUJ5yfgkZoBYXYktIt_DPv3LFeb5-W4HYjsgrqO80GJ6X13ZpUOtlARKkh8awEwUfJPmvDZtOQAJLYj0-c491VFORkGSEmCZhp1Z1EMWr6av1dlMnvJDTr6m3alF2jXsZAG2p3GLELSQEjB3lILfFY3EqFoQ3I20-rYYb8IqBLN6nOyTNhn0U9yMzmvRqMDtBTKXv_FquWrT8ouPa2WJkcr-CxLENLzjGW_kaBYLPq3faUf_MN_xgiZ-I55CdnvXuA4v2FTwzEroQJak_Pkf1f_Xy2ppc-uXVitivLARDW_wqDxubcwtcYhJ_.j1yTDo7M_1XBIw5Ig_w-VA/__results___files/__results___61_1.png)
 
-From the graph, we can conclude that majority of the users who weigh about 60 to 90 kg are the most active.
+From the graph, we can conclude that majority of the users who weigh about 60 to 90 kg are the most active and users who weigh above 80 kg seem to take longer walks.
 
-**User Type Distribution**
+**4.7 User Type Distribution**
 
-Now we shall take a look into how many users are active according to their average calories burned and average steps taken.
-
-Finding the mean of total steps, calories and total minutes asleep
+Now we shall take a look into how many users are active according to their average calories burned, average steps taken and average hours asleep.
 ```
 daily_average <- daily_activity_sleep %>%
   group_by(id) %>%
@@ -308,8 +319,6 @@ According to 10000 steps,
 - Highly active: More than 12,500
 
 With reference to average total steps taken, let's categorize each user to their respective active level.
-
-
 ```
 activity_user_type <- daily_average %>%
   mutate(activity_user_type = case_when( 
@@ -320,7 +329,7 @@ activity_user_type <- daily_average %>%
     mean_total_steps >= 12500 ~ "Highly active"
   ))
 ```
-
+Now that we have put the users in different active levels based on the mean total number of steps taken. Let's find out the percentages for the same.
 ```
 user_type <- activity_user_type %>%
     group_by(activity_user_type) %>%
@@ -334,6 +343,7 @@ user_type <- activity_user_type %>%
 ```
 user_type <- user_type %>% mutate(percent=percent(user_percent))
 ```
+Let's plot a pie chart to see the different active levels and which of each level is highest and which is the lowest.
 
 ```
 ggplot(user_type,aes(fill=activity_user_type,y = percent,x = "")) +
@@ -347,9 +357,9 @@ ggplot(user_type,aes(fill=activity_user_type,y = percent,x = "")) +
   guides(fill = guide_legend(title = "User Type Distribution"))
 ```
 
-![image](https://www.kaggleusercontent.com/kf/115340771/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..7bUx0B3-P2anyMF-cJdrmA.Ha9AJv4uHj-xFqDi9RGy3Rac0dCdnVaapYTPve4FxsJ3bVnMQFlCm5nxDJ4LIqChlv-Nnb6pdU8cAxkZkPYaL8UY4qBD-DXCAH5Q1dg1qyjNr_M4ZhDqpZ72W-0lflQaKeDjlVJ1UVWcNNoMYCwTWMrjh60Ec8tyoqG_n16VRleEyYMf5hLftHCCmp-HTeHL3mbtwSF27mVs4K_6acxS2zTiLVAefzLm6SAZM5IjIKicwsrGQXyBxra2itlyC5m8dEAfRCFpaY-1K-9e649iYttTZ8J3x0HHlGx5ikZCmwG-wb4NdVWdxmG6iKBL7QjYI4O0MUQQVN9qK1LLMxwugP6Km_AunYILtaS98rbb3N5x8MEnBwHOdx3uBxRV52osrfH70sEqnNzBkO7fbPPo_8kFy5dLqWnsbP6Cc6O9oHoZP9bVNTQMJxykuMTE-m2j0ZSVrH19hiWJKzPP55tG5HHUGxgjucvQXE1jteA5_4l8mmVzLHJPEFIMOycXojZlGI0vXY6CxUm9EkNv9LBnFphB7myL9PGv88kRRoqclU5e7N-WqhUNFUWY3fE2AxYoEkzRyOeA8gC8tqoVxyvM-fhQtGAmpmNlzCQn5uJfSBK9ir5erIILJCnfCDpKWAGRP05o-BntXSQUT__UFHY39hdo4WUQv0pUyQgmSpEcNhwfSY4WMScTV6DEGT3T205L.rnb5xXM2dJdWxrzJZWCBpQ/__results___files/__results___58_1.png)
+![image](https://www.kaggleusercontent.com/kf/116335165/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..If5VLmG4vgKShUdtmwQ8qw.66RXmZf_wWIXvIhVzEuvcdSxsjWysWuj_yNE1YevJEv2Hs4q1fqdc4GEuPuAMMP2Hji_yP8HCruO4_h7fR8BEYxkGOX-vJShwaSSlE_ozG150Vkczqw1VPFqKq83n0GpIEdTX8ffrp1ZVPFi2Q8NC1GHVIkVtTnDsiSNmP4yWhLGWn47X8A3sXfYe4TMQtkvOn5DHXQUooHlx5N3XhzUwi3-VOAVHTDDF9AM7sd9rbgtPjdoi-2e4ANMxRIfZKlKOSRn7zY3nPbEI4bxNvrph21mDxkW_N1NEuiHgQiRc6alrT4T_cfLjAezQAqSC8Q6h2V_FnbpJCumWDt7o97L2QBHboyytsLt5eH6ActeNusBMi73oY3lCd05av6pq44Xtr1_-0VUUJ5yfgkZoBYXYktIt_DPv3LFeb5-W4HYjsgrqO80GJ6X13ZpUOtlARKkh8awEwUfJPmvDZtOQAJLYj0-c491VFORkGSEmCZhp1Z1EMWr6av1dlMnvJDTr6m3alF2jXsZAG2p3GLELSQEjB3lILfFY3EqFoQ3I20-rYYb8IqBLN6nOyTNhn0U9yMzmvRqMDtBTKXv_FquWrT8ouPa2WJkcr-CxLENLzjGW_kaBYLPq3faUf_MN_xgiZ-I55CdnvXuA4v2FTwzEroQJak_Pkf1f_Xy2ppc-uXVitivLARDW_wqDxubcwtcYhJ_.j1yTDo7M_1XBIw5Ig_w-VA/__results___files/__results___69_1.png)
 
-From the evenly distributed pie chart, we can tell that a very less percentage of 4.17% of the users are highly active whereas about 37.5% of the users are somewhat active.
+From the evenly distributed pie chart, we can tell that the lowest percentage is 4.17% of the users who fall into the highly active category whereas about 37.5% of the users are somewhat active.
 
 ## 5. Act
 - The total no of steps taken doesn’t necessarily mean that the person will have a better sleep. Bellabeat app could provide a quiz when the user signs up to help the user understand better how they can improve both their sleep and how much they need to walk per day according to their height, weight, and more.
