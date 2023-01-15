@@ -101,7 +101,7 @@ head(sleep_day)
 ```
 
 ### 3.7 Dropping total_minutes_asleep in sleep_day dataset
-```
+```{r}
 sleep_day = subset(sleep_day, select = -c(total_minutes_asleep))
 ```
 
@@ -182,6 +182,10 @@ sleep_percent <- sleep_log%>%
   group_by(sleep_log) %>%
   summarise(sleep_percent = total / totals) %>%
   mutate(percent = scales::percent(sleep_percent))
+```
+#Formattable use to turn chr to percent
+```{r}
+sleep_percent <- sleep_percent %>% mutate(percent=percent(sleep_percent))
 
 head(sleep_percent)
 ```
@@ -244,8 +248,9 @@ weight_bmi_percent <- weight_log_users %>%
   group_by(bmi_log) %>%
   summarise(bmi_percent = total / totals) %>%
   mutate(percent = scales::percent(bmi_percent))
-  
+```
 #formattable use to turn chr to percent
+```{r}
 weight_bmi_percent <- weight_bmi_percent %>% mutate(percent=percent(bmi_percent))
 
 head(weight_bmi_percent)
@@ -319,7 +324,9 @@ user_type <- activity_user_type %>%
     group_by(activity_user_type) %>%
     summarise(user_percent = total / totals) %>%
     mutate(percent = scales::percent(user_percent))
-  
+```
+Formattable use to turn chr to percent
+```{r}
 user_type <- user_type %>% mutate(percent=percent(user_percent))
 
 head(user_type)
