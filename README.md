@@ -56,7 +56,7 @@ library(janitor) #clean_names()
 library(dplyr)
 library(ggplot2)
 library(formattable)
-library("patchwork")
+library(patchwork)
 ```
 ### 3.2 Loading the datasets
 ```bash
