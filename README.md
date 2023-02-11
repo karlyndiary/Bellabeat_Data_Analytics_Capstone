@@ -45,6 +45,7 @@ install.packages('tidyverse') #used for data cleaning
 install.packages('lubridate') #for date & time formats
 install.packages('janitor') #used for cleaning data
 install.packages('formattable')
+install.packages('patchwork') #main title for subplots
 ```
 
 ```bash
@@ -55,12 +56,14 @@ library(janitor) #clean_names()
 library(dplyr)
 library(ggplot2)
 library(formattable)
+library("patchwork")
 ```
 ### 3.2 Loading the datasets
 ```bash
 daily_activity <- read.csv("/cloud/project/dailyActivity_merged.csv")
 sleep_day <- read.csv("/cloud/project/sleepDay_merged.csv")
 weight_log_info <- read.csv("/cloud/project/weightLogInfo_merged.csv")
+hourly_intensity <- read.csv("/cloud/project//hourlyIntensities_merged.csv")
 ```
 ### 3.3 Exploring the dataframe
 The Summary of daily_activity, sleep_day and weight_log_info.
@@ -68,6 +71,7 @@ The Summary of daily_activity, sleep_day and weight_log_info.
 head(daily_activity) 
 head(sleep_day) 
 head(weight_log_info) 
+head(hourly_intensity) 
 ```
 ### 3.4 Cleaning and formatting the datasets
 3.4.1 Converting the snakeCase to camel_case for the three main datasets
@@ -75,12 +79,14 @@ head(weight_log_info)
 daily_activity <- clean_names(daily_activity)
 sleep_day <- clean_names(sleep_day)
 weight_log_info <- clean_names(weight_log_info)
+hourly_intensity <- clean_names(hourly_intensity)
 ```
 3.4.2 Checking for duplicates
 ```bash
 sum(duplicated(daily_activity))
 sum(duplicated(sleep_day))
 sum(duplicated(weight_log_info))
+sum(duplicated(hourly_intensity))
 ```
 3.4.3 Deleting duplicates
 ```bash
@@ -96,13 +102,13 @@ sleep_day <- sleep_day %>%
 nrow(sleep_day)
 ```
 3.4.4 Formatting String Date datatype to Date time datatype
-```bash
+```
 daily_activity$activity_date <- as.Date(daily_activity$activity_date,'%m/%d/%y')
 sleep_day$sleep_day <- as.Date(sleep_day$sleep_day,'%m/%d/%y')
 weight_log_info$date <- as.Date(weight_log_info$date,'%m/%d/%y')
 ```
 3.4.5 Renaming the data column for daily_activity and sleep_day datasets
-```bash
+```
 daily_activity <- daily_activity %>%
   rename(date = activity_date)
 
@@ -110,7 +116,7 @@ sleep_day <- sleep_day %>%
   rename(date = sleep_day)
   ```
 3.4.6 Converting minutes to hours for total_minutes_asleep in sleep_day dataset
-```bash
+```
 sleep_day$total_hours_asleep = round((sleep_day$total_minutes_asleep)/60, digits = 2)
   ```
 3.4.7 Dropping total_minutes_asleep in sleep_day dataset
@@ -118,15 +124,24 @@ sleep_day$total_hours_asleep = round((sleep_day$total_minutes_asleep)/60, digits
 sleep_day = subset(sleep_day, select = -c(total_minutes_asleep))
 ```
 3.4.8 Formatting String datatype to Boolean datatype in weight_log_info dataset
-  ```bash
-weight_log_info$is_manual_report <- as.logical(weight_log_info$is_manual_report)
   ```
-3.4.9 Creating a new column for weekdays in daily_activity dataset
-  ```bash
+weight_log_info$is_manual_report <- as.logical(weight_log_info$is_manual_report)
+  ```  
+3.4.9 Formatting activity_hour to date time datatype in hourly intensity dataframe
+```
+hourly_intensity$activity_hour=as.POSIXct(hourly_intensity$activity_hour, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+```
+3.4.10 Separating activity_hour into date and time columns for hourly intensity dataframe
+```
+hourly_intensity$time <- format(hourly_intensity$activity_hour, format = "%H:%M:%S")
+hourly_intensity$date <- format(hourly_intensity$activity_hour, format = "%m/%d/%y")
+```
+3.4.11 Creating a new column for weekdays in daily_activity dataset
+  ```
 daily_activity$day_of_week <- wday(daily_activity$date, label = T, abbr = T)
   ```
-3.4.10 Merging daily_activity and sleep_day dataset to daily_activity_sleep and daily_activity and weight_log_info to daily_activity_weight
-  ```bash
+3.4.12 Merging daily_activity and sleep_day dataset to daily_activity_sleep and daily_activity and weight_log_info to daily_activity_weight
+  ```
 daily_activity_sleep <- merge(daily_activity, sleep_day, by=c ("id", "date"))
 daily_activity_weight <- merge(daily_activity, weight_log_info, by=c ("id", "date"))
   ```
@@ -134,7 +149,7 @@ daily_activity_weight <- merge(daily_activity, weight_log_info, by=c ("id", "dat
 **4.1 Total Steps Vs Sleep**
 
 Let's take a look at how total steps taken will influence how many hours the user will sleep.
-```bash
+```
   ggplot(data = daily_activity_sleep) +
     aes(x=total_steps, y = total_hours_asleep) +
     geom_point(color = '#004c6d') + geom_smooth() + 
@@ -359,6 +374,31 @@ ggplot(user_type,aes(fill=activity_user_type,y = percent,x = "")) +
 ![__results___69_1](https://user-images.githubusercontent.com/116041695/215378483-e1cbeb27-c80c-4880-b0c6-4697a2b65092.png)
 
 From the evenly distributed pie chart, we can tell that the lowest percentage is 4.17% of the users who fall into the highly active category whereas about 37.5% of the users are somewhat active.
+
+**4.8 Active Hours**
+
+Let's plot a graph to see the peak hours
+
+```
+hourly_intensity <- hourly_intensity %>%
+  group_by(time) %>%
+  drop_na() %>%
+  summarise(mean_hourly_intensity = mean(total_intensity))
+```
+```
+ggplot(data = hourly_intensity) +
+  aes(x=time, y = mean_hourly_intensity) +
+  geom_histogram(stat = "identity", fill='#004c6d') +
+  theme(panel.border = element_rect(colour = "black", fill=NA)) +  
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(x = 'Hour', y = 'Total Intensity', 
+       title = 'Total Intensity per hour')
+       
+ggsave("Active Hours.png")
+```
+![__results___80_1](https://user-images.githubusercontent.com/116041695/218244003-7bd4fedc-f488-4ead-88ba-bd80440a1468.png)
+
+From the graph, we can see that the peak hours are from 5 pm to 7 pm.
 
 ## 5. Act
 - The total no of steps taken doesn’t necessarily mean that the person will have a better sleep. Bellabeat app could provide a quiz when the user signs up to help the user understand better how they can improve both their sleep and how much they need to walk per day according to their height, weight, and more.
